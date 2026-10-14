@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seen Live</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">admit one &middot; live &amp; in person</p>
+  <h1>Seen Live</h1>
+  <p class="count"><span id="acts">0</span> acts &middot; <span id="shows">0</span> times in the crowd</p>
+</header>
+
+<main id="stack" aria-label="Ticket stubs"></main>
+
+<footer>
+  <p>Stubs kept by Alijah &middot; more to come</p>
+</footer>
+
+<script src="artists.js"></script>
+<script>
+  const stack = document.getElementById("stack");
+  const paper = ["#efe3c8", "#e9d3b4", "#dfe3cf", "#ecd0c4", "#d9dfe4", "#efe0a8"];
+  const ink   = ["#8a2c1f", "#2f4a6b", "#3e5a35", "#6b3a5a", "#7a5414", "#2d2d2d"];
+  let shows = 0;
+
+  ARTISTS.forEach((a, i) => {
+    const times = a.times || 1;
+    shows += times;
+    const n = String(i + 1).padStart(3, "0");
+    // stable, slightly random tilt per ticket
+    const tilt = (((i * 37) % 9) - 4) * 0.45;
+
+    const t = document.createElement("article");
+    t.className = "ticket";
+    t.style.setProperty("--paper", paper[i % paper.length]);
+    t.style.setProperty("--ink", ink[i % ink.length]);
+    t.style.setProperty("--tilt", tilt + "deg");
+
+    t.innerHTML = `
+      <div class="stub">
+        <span>ADMIT ONE &middot; No. ${n}</span>
+      </div>
+      <div class="body">
+        <span class="label">${a.where ? a.where : "live performance"}</span>
+        <h2></h2>
+        <span class="serial">${"&#9646;".repeat(3 + (i % 5))} ${n}-${(i * 7919) % 10000}</span>
+      </div>
+      ${times > 1 ? `<span class="stamp">SEEN ×${times}</span>` : ""}
+    `;
+    t.querySelector("h2").textContent = a.name;
+    stack.appendChild(t);
+  });
+
+  document.getElementById("acts").textContent = ARTISTS.length;
+  document.getElementById("shows").textContent = shows;
+</script>
+</body>
+</html>
